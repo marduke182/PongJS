@@ -6,7 +6,7 @@
 
         <script type="text/javascript" src="http://code.createjs.com/preloadjs-0.1.0.min.js"></script>
         <script type="text/javascript" src="http://code.createjs.com/soundjs-0.2.0.min.js"></script>
-<!--       	<script type="text/javascript" src="http://localhost:8080/socket.io/socket.io.js"></script>-->
+       	<script type="text/javascript" src="http://192.168.1.248:8080/socket.io/socket.io.js"></script>
         <script type="text/javascript" src="http://code.createjs.com/easeljs-0.4.2.min.js"></script>
 
 
@@ -19,7 +19,23 @@
         <script type="text/javascript" src="assets/SpaceRock.js"></script>
         <script type="text/javascript" src="assets/Ship.js"></script>
         <script type="text/javascript" src="assets/GameLogic.js"></script>
+        <script>
+            var player;
+            var socket = io.connect('http://192.168.1.248:8080');
+            socket.on('welcome', function (data) {
+                
+                console.log(data);
+                player = data.player;
+                
+            });
             
+            socket.on('move', function (data) {
+                
+                console.log(data);
+                
+                barElement2.y = data.y;
+            });
+        </script>
 
         <link rel="stylesheet" type="text/css" href="assets/demoStyles.css" />
         <style type="text/css">

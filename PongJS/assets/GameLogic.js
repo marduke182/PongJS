@@ -334,6 +334,7 @@ function tick() {
     //call sub ticks
     cube.tick();
     barElement.tick();
+    socket.emit('move', {y: barElement.y});
     stage.update();
 }
 
