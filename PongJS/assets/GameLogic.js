@@ -59,47 +59,6 @@ function init() {
         document.getElementById("header").style.display = "none";
     }
 
-    if (!SoundJS.checkPlugin(true)) {
-        document.getElementById("error").style.display = "block";
-        document.getElementById("content").style.display = "none";
-        return;
-    }
-
-    // begin loading content (only sounds to load)
-    var manifest = [
-    {
-        id:"begin", 
-        src:"assets/Game-Spawn.mp3|assets/Game-Spawn.ogg"
-    },
-
-    {
-        id:"break", 
-        src:"assets/Game-Break.mp3|assets/Game-Break.ogg", 
-        data:6
-    },
-
-    {
-        id:"death", 
-        src:"assets/Game-Death.mp3|assets/Game-Death.ogg"
-    },
-
-    {
-        id:"laser", 
-        src:"assets/Game-Shot.mp3|assets/Game-Shot.ogg", 
-        data:6
-    },
-
-    {
-        id:"music", 
-        src:"assets/18-machinae_supremacy-lord_krutors_dominion.mp3|assets/18-machinae_supremacy-lord_krutors_dominion.ogg"
-    }
-    ];
-
-    preload = new PreloadJS();
-    preload.onComplete = doneLoading;
-    preload.installPlugin(SoundJS);
-    preload.loadManifest(manifest);
-
     canvas = document.getElementById("gameCanvas");
     stage = new Stage(canvas);
     messageField = new Text("Loading", "bold 24px Arial", "#FFFFFF");
@@ -109,25 +68,13 @@ function init() {
     messageField.y = canvas.height / 2;
     stage.addChild(messageField);
     stage.update(); 	//update the stage to show text
-
-    loadingInterval = setInterval(updateLoading, 200);
+    doneLoading();
+    
 }
-
-function stop() {
-    if (preload != null) {
-        preload.close();
-    }
-    SoundJS.stop();
-}
-
-function updateLoading() {
-    messageField.text = "Loading " + (preload.progress*100|0) + "%"
-    stage.update();
-}
-
 
 function doneLoading() {
-    clearInterval(loadingInterval);
+
+    
     scoreField = new Text("0", "bold 12px Arial", "#FFFFFF");
     scoreField.textAlign = "right";
     scoreField.x = canvas.width - 10;
@@ -136,14 +83,12 @@ function doneLoading() {
 
     messageField.text = "Welcome:  Click to play";
 
-    // start the music
-    SoundJS.play("music", SoundJS.INTERRUPT_NONE, 0, 0, -1, 0.4);
-
     watchRestart();
 }
 
 function watchRestart() {
     //watch for clicks
+    
     stage.addChild(messageField);
     stage.update(); 	//update the stage to show text
     canvas.onclick = handleClick;
@@ -155,7 +100,7 @@ function handleClick() {
     stage.removeChild(messageField);
 
     // indicate the player is now on screen
-    SoundJS.play("begin");
+    //SoundJS.play("begin");
 
     restart();
 }
@@ -412,7 +357,7 @@ function fireBullet() {
     o.graphics.beginStroke("#FFFFFF").moveTo(-1, 0).lineTo(1, 0);
 
     // play the shot sound
-    SoundJS.play("laser", SoundJS.INTERUPT_LATE);
+    //SoundJS.play("laser", SoundJS.INTERUPT_LATE);
 }
 
 function getSpaceRock(size) {
