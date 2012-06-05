@@ -210,13 +210,28 @@ function tick() {
     } else {
         barElement.canUp = true;
     }
-    
-    if(outOfBounds(cube, cube.bounds)) {
-        cube.vY = -cube.vY;
-        cube.vX = -cube.vX;
-    //        placeInBounds(cube, cube.bounds);
+    console.log(cube.y + "  " + (canvas.height+cube.bounds*2));
+    if(cube.y <= cube.bounds*-2) {
+        cube.y = cube.bounds*-2;
+        cube.vY = -cube.vY; 
     }
 
+    if(cube.y > canvas.height+cube.bounds*2) {
+        cube.vY = -cube.vY;
+        cube.y = canvas.height+cube.bounds*2;
+    }
+    //    
+    if(cube.x <= cube.bounds*-2) {
+        
+        cube.vX = -cube.vX; 
+        cube.x = cube.bounds*-2;
+    }
+    ////    
+    if(cube.x >= canvas.width+cube.bounds*2) {
+        
+        cube.vX = -cube.vX; 
+        cube.x = canvas.width+cube.bounds*2;
+    }
     //    //handle bullet movement and looping
     //    for(bullet in bulletStream) {
     //        var o = bulletStream[bullet];
@@ -356,8 +371,8 @@ function fireBullet() {
     //draw the bullet
     o.graphics.beginStroke("#FFFFFF").moveTo(-1, 0).lineTo(1, 0);
 
-    // play the shot sound
-    //SoundJS.play("laser", SoundJS.INTERUPT_LATE);
+// play the shot sound
+//SoundJS.play("laser", SoundJS.INTERUPT_LATE);
 }
 
 function getSpaceRock(size) {
