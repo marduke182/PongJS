@@ -32,24 +32,19 @@ var gameCount = 0;
 
 io.sockets.on('connection', function (socket) {
     //    console.log(io.sockets);
-    room = "game"+gameCount;
     
-    //    gameCount++;
-    if(io.sockets.clients(room).length > 2) {
-        socket.emit('welcome', {
-            status: 'busy'
-        });
-    } else {
-        console.log("welcome");
-        socket.join(room,function() {
-            socket.emit('welcome', {
-                player: io.sockets.clients(room).length,
-                status: 'welcome_baby'
-            });    
-        });
-    }
-
-    socket.on('move', function (data) {
-        socket.broadcast.to(room).emit('move',data);
+    
+    socket.emit('welcome', {
+        status: 'welcome_baby'
+    });    
+   
+    socket.on('mouseUp', function (data) {
+        socket.broadcast.emit('mouseUp',data);
+    });
+    socket.on('mouseDown', function (data) {
+        socket.broadcast.emit('mouseDown',data);
+    });
+    socket.on('tick', function (data) {
+        socket.broadcast.emit('tick',data);
     });
 });
