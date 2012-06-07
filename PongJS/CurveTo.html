@@ -6,7 +6,7 @@
 
         <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="http://code.createjs.com/easeljs-0.4.2.min.js"></script>
-       	<script type="text/javascript" src="http://172.16.16.248:8080/socket.io/socket.io.js"></script>
+       	<script type="text/javascript" src="http://107.21.248.6:8080/socket.io/socket.io.js"></script>
 
 
 
@@ -14,7 +14,7 @@
           http://code.createjs.com -->
 
         <script>
-            var socket = io.connect('http://172.16.16.248:8080');
+            var socket = io.connect('http://107.21.248.6:8080');
             socket.on('welcome', function (data) {
                 console.log(data);
             });
