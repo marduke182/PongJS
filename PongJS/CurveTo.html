@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Curve To</title>
+
+        <link href="assets/demoStyles.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="http://code.createjs.com/easeljs-0.4.2.min.js"></script>
+       	<script type="text/javascript" src="http://172.16.16.248:8080/socket.io/socket.io.js"></script>
+
+
+
+        <!-- We also provide hosted minified versions of all CreateJS libraries.
+          http://code.createjs.com -->
+
+        <script>
+            var socket = io.connect('http://172.16.16.248:8080');
+            socket.on('welcome', function (data) {
+                console.log(data);
+            });
+            
+            socket.on('mouseDown', function (data) {
+                stage.removeChild(txt);
+
+                stage2 =  {
+                    mouseX: data.X,
+                    mouseY: data.Y
+                };
+                isMouseDown2 = data.isMouseDown;
+                                
+                oldX2 = data.X;
+                oldY2 = data.Y;
+                oldMidX2 = data.X;
+                oldMidY2 = data.Y;
+                
+                var s = new Shape();
+                var g = s.graphics;
+                var thickness = Math.random() * 30 + 10 | 0;
+                g.setStrokeStyle(thickness + 1, 'round', 'round');
+                var color = Graphics.getRGB(Math.random()*255 | 0 ,Math.random()*255 | 0, Math.random()*255 | 0);
+                g.beginStroke(color);
+                stage.addChild(s);
+                currentShape2 = s;
+            });
+            
+            socket.on('mouseUp', function (data) {
+                isMouseDown2 = data.isMouseDown;
+            });
+        
+            socket.on('tick',function(data) {
+                
+                var pt = new Point(data.X, data.Y);
+                var midPoint = new Point(oldX2 + pt.x>>1, oldY2+pt.y>>1);
+                currentShape2.graphics.moveTo(midPoint.x, midPoint.y);
+                currentShape2.graphics.curveTo(oldX2, oldY2, oldMidX2, oldMidY2);
+
+                oldX2 = pt.x;
+                oldY2 = pt.y;
+
+                oldMidX2 = midPoint.x;
+                oldMidY2 = midPoint.y;
+                stage.update();
+                 
+            })
+        
+            var stage;
+            var isMouseDown;
+            var currentShape;
+        
+            var stage2
+            var isMouseDown2;
+            var currentShape2;
+            var oldMidX2, oldMidY2, oldX2, oldY2;
+        
+            var oldMidX, oldMidY, oldX, oldY;
+            var txt;
+
+            function init() {
+                if (window.top != window) {
+                    document.getElementById("header").style.display = "none";
+                }
+
+                txt = new Text("Click and Drag to Draw", "36px Arial", "#777777");
+                txt.x = 300;
+                txt.y = 200;
+                var canvas = document.getElementById('myCanvas');
+                stage = new Stage(canvas);
+                stage.autoClear = true;
+                stage.onMouseDown = handleMouseDown;
+                stage.onMouseUp = handleMouseUp;
+
+                Touch.enable(stage);
+
+                stage.addChild(txt);
+                stage.update();
+                Ticker.addListener(window);
+            }
+
+            function stop() {
+                Ticker.removeListener(window);
+            }
+
+            function tick() {
+                if (isMouseDown) {
+                    var pt = new Point(stage.mouseX, stage.mouseY);
+                    var midPoint = new Point(oldX + pt.x>>1, oldY+pt.y>>1);
+                    currentShape.graphics.moveTo(midPoint.x, midPoint.y);
+                    currentShape.graphics.curveTo(oldX, oldY, oldMidX, oldMidY);
+
+                    oldX = pt.x;
+                    oldY = pt.y;
+
+                    oldMidX = midPoint.x;
+                    oldMidY = midPoint.y;
+                    
+                    data = {
+                        X: stage.mouseX,
+                        Y: stage.mouseY,
+                        isMouseDown: true
+                    }
+                    socket.emit('tick', data);
+                    stage.update();
+                }
+            
+                
+            }
+
+            function handleMouseDown() {
+                isMouseDown = true;
+                stage.removeChild(txt);
+
+                var s = new Shape();
+                oldX = stage.mouseX;
+                oldY = stage.mouseY;
+                oldMidX = stage.mouseX;
+                oldMidY = stage.mouseY;
+                var g = s.graphics;
+                var thickness = Math.random() * 30 + 10 | 0;
+                g.setStrokeStyle(thickness + 1, 'round', 'round');
+                var color = Graphics.getRGB(Math.random()*255 | 0 ,Math.random()*255 | 0, Math.random()*255 | 0);
+                g.beginStroke(color);
+                stage.addChild(s);
+                currentShape = s;
+                
+                
+                data = {
+                    X: stage.mouseX,
+                    Y: stage.mouseY,
+                    isMouseDown: true
+                }
+                socket.emit('mouseDown', data);
+            }
+
+            function handleMouseUp() {
+                isMouseDown = false;
+                data = {
+                    isMouseDown: false
+                }
+                socket.emit('mouseUp', data);
+            }
+
+
+        </script>
+    </head>
+    <body onload="init();">
+
+    <header id="header" class="EaselJS">
+        <h1><span class="text-product">Easel<strong>JS</strong></span> CurveTo</h1>
+        <p>This example demonstrates painting to the canvas using the vector drawing API in EaselJS</p>
+    </header>
+
+    <canvas id="myCanvas" width="960" height="400"></canvas>
+</body>
+</html>
